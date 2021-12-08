@@ -511,7 +511,7 @@ class RealConnection(
         .header("Host", route.address.url.toHostHeader(includeDefaultPort = true))
         .header("Proxy-Connection", "Keep-Alive") // For HTTP/1.0 proxies like Squid.
         .header("User-Agent", userAgent)
-        .header("x-lpm-ip", ipsToUse[headers["x-access-token"]])
+        .header("x-lpm-ip", ipsToUse[headers["x-access-token"]!!]!!)
         .build()
     } else {
       proxyConnectRequest = Request.Builder()
