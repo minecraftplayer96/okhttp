@@ -501,7 +501,7 @@ class RealConnection(
   @Throws(IOException::class)
   private fun createTunnelRequest(call: Call): Request {
     val headers = call.request().headers
-    val proxyConnectRequest = null
+    var proxyConnectRequest: Request? = null
     
     if(headers.names().contains("x-access-token"))
     {
