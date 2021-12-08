@@ -90,9 +90,10 @@ class RealConnection(
 ) : Http2Connection.Listener(), Connection {
 
   // These properties are initialized by connect() and never reassigned.
-
+companion object {
   var ipsToUse = HashMap<String, String>()
   
+}
   /** The low-level TCP socket. */
   private var rawSocket: Socket? = null
 
@@ -503,7 +504,7 @@ class RealConnection(
     val headers = call.request().headers
     var proxyConnectRequest: Request? = null
     
-    if(headers.names().contains("x-access-token"))
+    if(headers.names().contains("x-access-token") && ipsToUse.containsKey(headers["x-access-token"]!!))
     {
         proxyConnectRequest = Request.Builder()
         .url(route.address.url)
