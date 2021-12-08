@@ -90,10 +90,7 @@ class RealConnection(
 ) : Http2Connection.Listener(), Connection {
 
   // These properties are initialized by connect() and never reassigned.
-companion object {
-  var ipsToUse = HashMap<String, String>()
-  
-}
+
   /** The low-level TCP socket. */
   private var rawSocket: Socket? = null
 
@@ -765,6 +762,7 @@ companion object {
   }
 
   companion object {
+    var ipsToUse = HashMap<String, String>()
     private const val NPE_THROW_WITH_NULL = "throw with null exception"
     private const val MAX_TUNNEL_ATTEMPTS = 21
     const val IDLE_CONNECTION_HEALTHY_NS = 10_000_000_000 // 10 seconds.
