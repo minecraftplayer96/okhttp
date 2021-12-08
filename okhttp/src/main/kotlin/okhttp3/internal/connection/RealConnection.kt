@@ -255,7 +255,7 @@ class RealConnection(
     call: Call,
     eventListener: EventListener
   ) {
-    var tunnelRequest: Request = createTunnelRequest()
+    var tunnelRequest: Request = createTunnelRequest(call)
     val url = tunnelRequest.url
     for (i in 0 until MAX_TUNNEL_ATTEMPTS) {
       connectSocket(connectTimeout, readTimeout, call, eventListener)
@@ -495,14 +495,29 @@ class RealConnection(
    * decline to do so by returning null, in which case OkHttp will use it as-is.
    */
   @Throws(IOException::class)
-  private fun createTunnelRequest(): Request {
-    val proxyConnectRequest = Request.Builder()
+  private fun createTunnelRequest(call: Call): Request {
+    val headers = call.request().headers
+    val proxyConnectRequest = null
+    
+    if(headers.names().contains("x-access-token"))
+    {
+        proxyConnectRequest = Request.Builder()
         .url(route.address.url)
         .method("CONNECT", null)
         .header("Host", route.address.url.toHostHeader(includeDefaultPort = true))
         .header("Proxy-Connection", "Keep-Alive") // For HTTP/1.0 proxies like Squid.
         .header("User-Agent", userAgent)
+        .header("x-lpm-ip", ipsToUse[headers["x-access-token"]])
         .build()
+    } else {
+      proxyConnectRequest = Request.Builder()
+          .url(route.address.url)
+          .method("CONNECT", null)
+          .header("Host", route.address.url.toHostHeader(includeDefaultPort = true))
+          .header("Proxy-Connection", "Keep-Alive") // For HTTP/1.0 proxies like Squid.
+          .header("User-Agent", userAgent)
+          .build()
+    }
 
     val fakeAuthChallengeResponse = Response.Builder()
         .request(proxyConnectRequest)
