@@ -70,6 +70,8 @@ import okio.BufferedSource
 import okio.buffer
 import okio.sink
 import okio.source
+import java.util.*
+
 
 /**
  * A connection to a remote web server capable of carrying 1 or more concurrent streams.
@@ -89,6 +91,8 @@ class RealConnection(
 
   // These properties are initialized by connect() and never reassigned.
 
+  var ipsToUse = HashMap<String, String>()
+  
   /** The low-level TCP socket. */
   private var rawSocket: Socket? = null
 
