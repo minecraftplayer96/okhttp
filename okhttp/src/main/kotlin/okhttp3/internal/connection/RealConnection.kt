@@ -70,8 +70,6 @@ import okio.BufferedSource
 import okio.buffer
 import okio.sink
 import okio.source
-import java.util.*
-
 
 /**
  * A connection to a remote web server capable of carrying 1 or more concurrent streams.
@@ -498,27 +496,28 @@ class RealConnection(
    */
   @Throws(IOException::class)
   private fun createTunnelRequest(call: Call): Request {
-    val headers = call.request().headers
+    val req = call.request()
+    val tag = req.tag()
+    
     var proxyConnectRequest: Request? = null
     
-    if(headers.names().contains("x-access-token") && ipsToUse.containsKey(headers["x-access-token"]!!))
-    {
-        proxyConnectRequest = Request.Builder()
+    if(tag != null && tag is String) {
+      proxyConnectRequest = Request.Builder()
         .url(route.address.url)
         .method("CONNECT", null)
         .header("Host", route.address.url.toHostHeader(includeDefaultPort = true))
         .header("Proxy-Connection", "Keep-Alive") // For HTTP/1.0 proxies like Squid.
         .header("User-Agent", userAgent)
-        .header("x-lpm-ip", ipsToUse[headers["x-access-token"]!!]!!)
+        .header("x-lum-ip", tag!!)
         .build()
     } else {
-      proxyConnectRequest = Request.Builder()
-          .url(route.address.url)
-          .method("CONNECT", null)
-          .header("Host", route.address.url.toHostHeader(includeDefaultPort = true))
-          .header("Proxy-Connection", "Keep-Alive") // For HTTP/1.0 proxies like Squid.
-          .header("User-Agent", userAgent)
-          .build()
+       proxyConnectRequest = Request.Builder()
+        .url(route.address.url)
+        .method("CONNECT", null)
+        .header("Host", route.address.url.toHostHeader(includeDefaultPort = true))
+        .header("Proxy-Connection", "Keep-Alive") // For HTTP/1.0 proxies like Squid.
+        .header("User-Agent", userAgent)
+        .build()
     }
 
     val fakeAuthChallengeResponse = Response.Builder()
@@ -762,7 +761,6 @@ class RealConnection(
   }
 
   companion object {
-    var ipsToUse = HashMap<String, String>()
     private const val NPE_THROW_WITH_NULL = "throw with null exception"
     private const val MAX_TUNNEL_ATTEMPTS = 21
     const val IDLE_CONNECTION_HEALTHY_NS = 10_000_000_000 // 10 seconds.
