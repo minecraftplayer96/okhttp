@@ -498,10 +498,11 @@ class RealConnection(
   private fun createTunnelRequest(call: Call): Request {
     val req = call.request()
     val tag = req.tag()
-    
+    println("got request")
     var proxyConnectRequest: Request? = null
     
     if(tag != null && tag is String) {
+       println("ip")
       proxyConnectRequest = Request.Builder()
         .url(route.address.url)
         .method("CONNECT", null)
@@ -511,6 +512,7 @@ class RealConnection(
         .header("x-lpm-ip", tag!!)
         .build()
     } else {
+         println("no ip")
        proxyConnectRequest = Request.Builder()
         .url(route.address.url)
         .method("CONNECT", null)
