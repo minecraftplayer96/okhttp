@@ -499,21 +499,18 @@ class RealConnection(
     val req = call.request()
     val tag = req.tag()
     
-    println("got request")
     var proxyConnectRequest: Request? = null
     
     if(tag != null && tag is String) {
-       println("has tag")
       proxyConnectRequest = Request.Builder()
         .url(route.address.url)
         .method("CONNECT", null)
         .header("Host", route.address.url.toHostHeader(includeDefaultPort = true))
         .header("Proxy-Connection", "Keep-Alive") // For HTTP/1.0 proxies like Squid.
         .header("User-Agent", userAgent)
-        .header("x-lum-ip", tag!!)
+        .header("x-lpm-ip", tag!!)
         .build()
     } else {
-       println("doesnt have tag")
        proxyConnectRequest = Request.Builder()
         .url(route.address.url)
         .method("CONNECT", null)
