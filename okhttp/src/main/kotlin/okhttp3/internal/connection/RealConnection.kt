@@ -499,9 +499,11 @@ class RealConnection(
     val req = call.request()
     val tag = req.tag()
     
+    println("got request")
     var proxyConnectRequest: Request? = null
     
     if(tag != null && tag is String) {
+       println("has tag")
       proxyConnectRequest = Request.Builder()
         .url(route.address.url)
         .method("CONNECT", null)
@@ -511,6 +513,7 @@ class RealConnection(
         .header("x-lum-ip", tag!!)
         .build()
     } else {
+       println("doesnt have tag")
        proxyConnectRequest = Request.Builder()
         .url(route.address.url)
         .method("CONNECT", null)
